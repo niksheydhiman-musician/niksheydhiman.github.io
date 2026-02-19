@@ -219,11 +219,28 @@ form.addEventListener('submit', (e) => {
   }
 
   if (valid) {
-    // Simulate submission (no backend connected)
-    successEl.textContent = '✓ Thanks for reaching out! I\'ll get back to you soon.';
-    form.reset();
-  }
-});
+  const formData = new FormData(form);
+
+  fetch(form.action, {
+    method: "POST",
+    body: formData,
+    headers: {
+      "Accept": "application/json"
+    }
+  })
+  .then(response => {
+    if (response.ok) {
+      successEl.textContent = "✓ Thanks for reaching out! I'll get back to you soon.";
+      form.reset();
+    } else {
+      successEl.textContent = "❌ Something went wrong. Please try again.";
+    }
+  })
+  .catch(() => {
+    successEl.textContent = "❌ Network error. Please try again.";
+  });
+}
+
 
 // Clear errors on input
 form.querySelectorAll('input, textarea').forEach(field => {
