@@ -131,7 +131,7 @@ function goTo(index) {
   current = (index + cardCount) % cardCount;
   // Each card is 100% of the slider + gap compensation
   const cardWidth = track.parentElement.offsetWidth;
-  track.style.transform = `translateX(-${current * (cardWidth + 32)}px)`;
+  track.style.transform = `translateX(-${current * (cardWidth)}px)`;
 
   dots.forEach((d, i) => {
     d.classList.toggle('active', i === current);
