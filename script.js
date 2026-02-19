@@ -165,87 +165,91 @@ window.addEventListener('resize', () => goTo(current));
    ==================================================== */
 const form = document.getElementById('contactForm');
 
-function showError(input, msg) {
-  input.classList.add('error');
-  const errEl = input.parentElement.querySelector('.form-error');
-  if (errEl) errEl.textContent = msg;
-}
+if (form) {
 
-function clearError(input) {
-  input.classList.remove('error');
-  const errEl = input.parentElement.querySelector('.form-error');
-  if (errEl) errEl.textContent = '';
-}
-
-function validateEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  let valid = true;
-
-  const nameEl    = form.querySelector('#name');
-  const emailEl   = form.querySelector('#email');
-  const messageEl = form.querySelector('#message');
-  const successEl = document.getElementById('formSuccess');
-
-  // Reset
-  [nameEl, emailEl, messageEl].forEach(clearError);
-  successEl.textContent = '';
-
-  // Validate name
-  if (!nameEl.value.trim()) {
-    showError(nameEl, 'Please enter your name.');
-    valid = false;
+  function showError(input, msg) {
+    input.classList.add('error');
+    const errEl = input.parentElement.querySelector('.form-error');
+    if (errEl) errEl.textContent = msg;
   }
 
-  // Validate email
-  if (!emailEl.value.trim()) {
-    showError(emailEl, 'Please enter your email address.');
-    valid = false;
-  } else if (!validateEmail(emailEl.value.trim())) {
-    showError(emailEl, 'Please enter a valid email address.');
-    valid = false;
+  function clearError(input) {
+    input.classList.remove('error');
+    const errEl = input.parentElement.querySelector('.form-error');
+    if (errEl) errEl.textContent = '';
   }
 
-  // Validate message
-  if (!messageEl.value.trim()) {
-    showError(messageEl, 'Please enter a message.');
-    valid = false;
-  } else if (messageEl.value.trim().length < 20) {
-    showError(messageEl, 'Message should be at least 20 characters.');
-    valid = false;
+  function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  if (valid) {
-  const formData = new FormData(form);
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let valid = true;
 
-  fetch(form.action, {
-    method: "POST",
-    body: formData,
-    headers: {
-      "Accept": "application/json"
+    const nameEl    = form.querySelector('#name');
+    const emailEl   = form.querySelector('#email');
+    const messageEl = form.querySelector('#message');
+    const successEl = document.getElementById('formSuccess');
+
+    // Reset
+    [nameEl, emailEl, messageEl].forEach(clearError);
+    successEl.textContent = '';
+
+    // Validate name
+    if (!nameEl.value.trim()) {
+      showError(nameEl, 'Please enter your name.');
+      valid = false;
     }
-  })
-  .then(response => {
-    if (response.ok) {
-      successEl.textContent = "✓ Thanks for reaching out! I'll get back to you soon.";
-      form.reset();
-    } else {
-      successEl.textContent = "❌ Something went wrong. Please try again.";
+
+    // Validate email
+    if (!emailEl.value.trim()) {
+      showError(emailEl, 'Please enter your email address.');
+      valid = false;
+    } else if (!validateEmail(emailEl.value.trim())) {
+      showError(emailEl, 'Please enter a valid email address.');
+      valid = false;
     }
-  })
-  .catch(() => {
-    successEl.textContent = "❌ Network error. Please try again.";
+
+    // Validate message
+    if (!messageEl.value.trim()) {
+      showError(messageEl, 'Please enter a message.');
+      valid = false;
+    } else if (messageEl.value.trim().length < 20) {
+      showError(messageEl, 'Message should be at least 20 characters.');
+      valid = false;
+    }
+
+    if (valid) {
+      const formData = new FormData(form);
+
+      fetch(form.action, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Accept": "application/json"
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          successEl.textContent = "✓ Thanks for reaching out! I'll get back to you soon.";
+          form.reset();
+        } else {
+          successEl.textContent = "❌ Something went wrong. Please try again.";
+        }
+      })
+      .catch(() => {
+        successEl.textContent = "❌ Network error. Please try again.";
+      });
+    }
   });
+
+  // Clear errors on input
+  form.querySelectorAll('input, textarea').forEach(field => {
+    field.addEventListener('input', () => clearError(field));
+  });
+
 }
-
-
-// Clear errors on input
-form.querySelectorAll('input, textarea').forEach(field => {
-  field.addEventListener('input', () => clearError(field));
-});
 
 /* ====================================================
    ACTIVE NAV LINK ON SCROLL
